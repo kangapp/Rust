@@ -53,7 +53,7 @@ jobs:
         with:
           components: llvm-tools-preview
       - name: Install cargo-nextest
-        uses: taiki-e/install-action@nextest
+        run: cargo install --locked cargo-nextest
       - name: cargo nextest run
         run: cargo nextest run --all-targets
 
