@@ -11,61 +11,37 @@ env:
   RUST_BACKTRACE: 1
 
 jobs:
-  toolchain:
-    name: toolchain
+  ci:
+    name: CI
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
       - name: Read toolchain file
         run: cat rust-toolchain.toml
 
-  cargo-check:
-    name: cargo check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
         with:
-          components: rustfmt, clippy
+          components: rustfmt, clippy, llvm-tools-preview
+
       - name: cargo check
         run: cargo check --all-targets
 
-  lint:
-    name: lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt, clippy
       - name: cargo fmt check
         run: cargo fmt --all -- --check
+
       - name: cargo clippy
         run: cargo clippy --all-targets -- -D warnings
 
-  test:
-    name: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: llvm-tools-preview
       - name: Install cargo-nextest
         run: cargo install --locked cargo-nextest
+
       - name: cargo nextest run
         run: cargo nextest run --all-targets
 
-  coverage:
-    name: coverage
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: llvm-tools-preview
       - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@llvm-cov
+        run: cargo install --locked cargo-llvm-cov
+
       - name: cargo llvm-cov
         run: cargo llvm-cov --all-targets
