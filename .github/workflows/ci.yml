@@ -25,6 +25,12 @@ jobs:
         with:
           components: rustfmt, clippy, llvm-tools-preview
 
+      - name: Install cargo-nextest
+        uses: taiki-e/install-action@nextest
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@llvm-cov
+
       - name: cargo check
         run: cargo check --all-targets
 
@@ -34,14 +40,8 @@ jobs:
       - name: cargo clippy
         run: cargo clippy --all-targets -- -D warnings
 
-      - name: Install cargo-nextest
-        uses: taiki-e/install-action@nextest
-
       - name: cargo nextest run
         run: cargo nextest run --all-targets
-
-      - name: Install cargo-llvm-cov
-        run: cargo install --locked cargo-llvm-cov
 
       - name: cargo llvm-cov
         run: cargo llvm-cov --all-targets
